@@ -22,28 +22,6 @@ In addition to augmenting FROST with robustness in the distributed key generatio
 
 ### ICE-FROST Protocol Outline
 
-In this section, we will provide an outline of ICE-FROST.
-
-#### Preliminaries
-
-##### Schnorr Signature Algorithm
-
-
-
-#### Distributed Key Generation: Initial Run
-
-
-
-#### Redistribution of Shares
-
-
-
-#### Preprocessing
-
-
-
-#### Signing
-
 
 
 ### ICE-FROST in XCP
@@ -52,10 +30,7 @@ In this section, we will provide an outline of ICE-FROST.
 
 ### Benefits of ICE-FROST over FROST
 
-The main benefits of ICE-FROST over its predecessor FROST are:
 
-- Robustness of key generation phase, meaning that we are guaranteed to obtain public key and/or redistribute the shares, without aborting the protocol.
-- Redistribution feature of shares, which allows the group public key to be static, meaning that it could be used for as long as required by the group or in our specific case by sidechain.
 
 ### Future Work and Next Steps
 
