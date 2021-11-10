@@ -19,22 +19,3 @@ A _t out of n_ threshold signature scheme is a multi-party digital signature pro
 :::
 
 In addition to augmenting FROST with robustness in the distributed key generation phase, ICE-FROST protocol allows a blockchain network to distribute a **static long-running public key** with respect to which partial signatures can be produced by any set of signers. This is a key feature for blockchains, i.e. dynamic networks whose participating nodes arbitrarily join and leave.
-
-### ICE-FROST Protocol Outline
-
-
-
-### ICE-FROST in XCP
-
-
-
-### Benefits of ICE-FROST over FROST
-
-
-
-### Future Work and Next Steps
-
-ICE-FROST, as previously mentioned has a robust distributed key generation phase. The next step is to make the signing phase robust as well. At the moment, it is semi-robust, due to the fact that it will need to be re-run if at least one of the signers is malicious. Given that the malicious participants are excluded in the next run and re-runs, we are still getting a signature. Thus, a logical next step is to make signing run only once per certificate. This will most likely come at a cost. Thus, we see this next step as an additional option, rather than a replacement of the current one.
-
-Notice that having both options available would not cause any interoperability issues, as the final signature in any case will be a Schnorr signature with respect to the given group public key and hence can still be verified by any entity with ability to verify Schnorr signatures.
-
