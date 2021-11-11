@@ -29,6 +29,8 @@ In this section, we will provide an outline of ICE-FROST.
 
 ##### Schnorr Signature Algorithm
 
+[Schnorr signature algorithm](https://link.springer.com/article/10.1007/BF00196725) is a digital signature algorithm. FROST and ICE-FROST are both based on Schnorr, hence we will briefly describe it here.
+
 
 
 #### Distributed Key Generation: Initial Run
