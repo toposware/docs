@@ -51,6 +51,7 @@ Participants' shares are updated by running the *key update protocol* which is a
 
 #### Preprocessing
 
+As mentioned above, in a Schnorr signature scheme, the signer initially generates a committment to a random nonce and sends it to the verifier. In a threshold Shnorr signature scheme, the nonce generation(as well as the private/public key generation), should be made distributed such that any set of at least t participants can generate a valid nonce and corresponding committment. The distributed nonce can be genrated by running a separate round of DKG algorithm. However, in order to avoid adding an extra round to the protocol and achieve a round-optimized protocol, nonce and its commitment can be generated during a preprocessing round. During the preprocessing round each participant generates a list of single-use private nonce pairs and corresponding public commitment shares. Each entry of the list will be used for signing one message and once all used, the preprocessing round will re-run.
 
 
 #### Signing
