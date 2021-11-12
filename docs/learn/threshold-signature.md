@@ -43,7 +43,9 @@ ICE FROST distributed key generation protocol is based on the [DKG algorithm of 
 To enable cheating identifiability in ICE FROST, each participant chooses a pair of ephemeral public and private keys for each secret dealing and publishes the public key and a proof of knowledge of the corresponding private key. For sending shares to each participant a symmetric [Diffie-Helman(DH) key](https://ee.stanford.edu/%7Ehellman/publications/24.pdf) is established mutually between the sender and receiver of the share. This key is used to securely encrypt the share and sending it out to the corresponding receiver. If a participant cheats by sending out an inconsistant share, the receiver will catch it using the initial published committment. However, since shares are transmitted all encrypted, the receiver of the mal-formed share has to reveal the mutual DH key to convince other participants that it has received a mal-formed share. If the receiver lies and accueses an honest participant to sending a mal-formed share it will be caught itself after other participants check its complaint using the revealed DH key.
 
 
-#### Redistribution of Shares
+#### Updating Shares
+
+Participants' shares are updated by running the *key update protocol* which is a redistribution of secret shares to provide each shareholder with a fresh signing share while allowing new participants to join or the old ones to leave the protocol. Even if the set of participants stay the same, it is recommended to run the key update protocol every once in a while (e.g., every six hours) to maintain the security of distributed keys. To redistribute the secret key, each participant distributes its secret signing share using the described DKG. If required, the set of participants and the scheme's threshold can be updated during each run of the key update protocol. 
 
 
 
