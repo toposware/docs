@@ -9,7 +9,7 @@ sidebar_position: 4
 
 To prevent spamming, false identity and data tampering, Topos XCP leverages _digital signatures_ to ensure Certificates are attributed to the right originators—i.e. the blockchains that emit them to prove the validity of their state transitions—and that their integrity is retained during their propagation. As seen previously, signatures are included in Certificates and hence can be validated prior to verifying the Certificate validity using a public key assigned to their origin side-chain. 
 
-A basic digital signature allows an *individual* entity to sign a message. However, in blockchain environments we tent to distribute trust among the group of validators rather than single ones. That's why multi-signatures and threshold signatures are used by different blockchain projects. While multi signatures goves the signing authority to a predefined group of entities, in threshold signatures *any* group of signers with enough cardinality are able to sign.
+A basic digital signature allows an *individual* entity to sign a message. However, in blockchain environments we tent to distribute trust among the group of validators rather than single entity. That's why multi-signatures and threshold signatures are used by different blockchain projects. While multi signatures gives the signing authority to a predefined group of entities, in threshold signatures *any* group of signers of sufficiently large cardinality are able to sign.
 
 ## ICE-FROST
 
@@ -21,7 +21,13 @@ A _t out of n_ threshold signature scheme is a multi-party digital signature pro
 
 :::
 
-In addition to augmenting FROST with robustness in the distributed key generation phase, ICE-FROST protocol enjoys two properties that are tailored for our XCP design; namely, i) exact **identification of a cheating entity** during the key generation and signing protocols, that can conclude in preventing cheating if suitable punishments ar predicted for cheaters, and ii)allowing a blockchain network to distribute a **static long-running public key** with respect to which partial signatures can be produced by any set of signers. This allows the public key associated to each side-chain stay static while the set of potential signers can vary easily. This is a key feature for blockchains, i.e. dynamic networks whose participating nodes arbitrarily join and leave.
+In addition to augmenting FROST with robustness in the distributed key generation phase, ICE-FROST protocol enjoys two properties that are tailored for our XCP design, namely:
+
+i) exact **identification of a cheating entity** during the key generation and signing protocols, that can conclude in preventing cheating if suitable punishments are predicted for cheaters, and
+
+ii) allows a blockchain network to distribute a **static long-running public key** with respect to which partial signatures can be produced by any set of signers.
+
+This allows the public key associated to each side-chain stay static while the set of potential signers can vary easily. This is a key feature for blockchains, i.e. dynamic networks whose participating nodes arbitrarily join and leave.
 
 ### ICE-FROST Protocol Outline
 
@@ -33,14 +39,14 @@ In this section, we will provide an outline of ICE-FROST.
 
 [Schnorr signature algorithm](https://link.springer.com/article/10.1007/BF00196725) is a digital signature algorithm. FROST and ICE-FROST are both based on Schnorr, hence we will briefly describe it here.
 
-Shnorr signatures are constructed based on the Sigma protocol structure. Sigma protocols consist of three message transmissions between a prover and a verifier; i) the prover sends a commitment value to the verifier, ii) the prover sends a uniformly random challenge to the verifier, and iii) the prover answers to the challenge using some public function, and a witness. The prover is the signer in the Schnorr signature scheme and the witness is the secret key held by the signer that is kept secret using the descrete log hardness assumption. The signature scheme is used non-interactive using [Fiat-Shamir transform](https://link.springer.com/content/pdf/10.1007/3-540-47721-7_12.pdf) that is practically using the output of a hash function on the commitment, witness and the message instead of the challenge value. 
+Shnorr signatures are constructed based on the Sigma protocol structure. Sigma protocols consist of three message transmissions between a prover and a verifier; i) the prover sends a commitment value to the verifier, ii) the prover sends a uniformly random challenge to the verifier, and iii) the prover answers to the challenge using some public function, and a witness. The prover is the signer in the Schnorr signature scheme and the witness is the secret key held by the signer that is kept secret using the discrete log hardness assumption. The signature scheme is made and used non-interactively using [Fiat-Shamir transform](https://link.springer.com/content/pdf/10.1007/3-540-47721-7_12.pdf) that is practically using the output (digest) of a hash function with input of the commitment, witness and the message instead of the challenge value. 
 
 
-#### Distributed Key Generation(DKG): Initial Run
+#### Distributed Key Generation (DKG): Initial Run
 
-ICE FROST distributed key generation protocol is based on the [DKG algorithm of Pedersen](https://link.springer.com/chapter/10.1007/3-540-46416-6_47) that is in effect a distributed secret sharing scheme. All participant of the DKG algorithm *securely* distribute their random chosen secret among other participants. Since no participant is trusted prior to execution of the protocol,  a *verifiable* secret sharing scheme is used that allows participants to verify if their received share is consistant with others. Verfiability is achieved by enforcing the secret dealer to committ to its chosen secret (and the corresponding polynomial that is used for secret sharing) and broadcast the commitment values at the beginig of the protocol. After successful sharing of secrets, participants add their received shares to calculate their private signing share. The group's public verification key is calculated using the public broadcasted committments. 
+ICE FROST distributed key generation protocol is based on the [DKG algorithm of Pedersen](https://link.springer.com/chapter/10.1007/3-540-46416-6_47), which is a distributed secret sharing scheme. All participant of the DKG algorithm *securely* distribute their random chosen secrets among other participants. Since no participant is trusted prior to execution of the protocol, a *verifiable* secret sharing scheme is used that allows participants to verify if the received share is consistent with others. Verifiability is achieved by enforcing the secret dealer to commit to its chosen secret (and the corresponding polynomial that is used for secret sharing) and broadcast the commitment values at the beginning of the protocol. After successful sharing of secrets, participants add their received shares to calculate their private signing share. The group's public verification key is calculated using the public broadcasted commitments. 
 
-To enable cheating identifiability in ICE FROST, each participant chooses a pair of ephemeral public and private keys for each secret dealing and publishes the public key and a proof of knowledge of the corresponding private key. For sending shares to each participant a symmetric [Diffie-Helman(DH) key](https://ee.stanford.edu/%7Ehellman/publications/24.pdf) is established mutually between the sender and receiver of the share. This key is used to securely encrypt the share and sending it out to the corresponding receiver. If a participant cheats by sending out an inconsistant share, the receiver will catch it using the initial published committment. However, since shares are transmitted all encrypted, the receiver of the mal-formed share has to reveal the mutual DH key to convince other participants that it has received a mal-formed share. If the receiver lies and accueses an honest participant to sending a mal-formed share it will be caught itself after other participants check its complaint using the revealed DH key.
+To enable cheating identifiability in ICE FROST, each participant chooses a pair of ephemeral public and private keys for each secret dealing and publishes the public key and a proof of knowledge of the corresponding private key. In order to securely send shares to each participant a [Diffie-Hellman(DH) key agreement](https://ee.stanford.edu/%7Ehellman/publications/24.pdf) is used to established shared secret key between the sender and receiver of the given share. This key is used to securely encrypt the share and send it out to the corresponding receiver. If a participant cheats by sending out an inconsistent share, the receiver will catch it using the initial published commitment. However, since shares are transmitted in the encrypted form, the receiver of the mal-formed share has to reveal the mutual DH key to convince other participants that it has received a mal-formed share. If the receiver lies and accuses an honest participant of sending a mal-formed share it will be caught itself after other participants check its complaint using the revealed DH key.
 
 
 #### Updating Shares
@@ -51,7 +57,7 @@ Participants' shares are updated by running the *key update protocol* which is a
 
 #### Preprocessing
 
-As mentioned above, in a Schnorr signature scheme, the signer initially generates a committment to a random nonce and sends it to the verifier. In a threshold Shnorr signature scheme, the nonce generation(as well as the private/public key generation), should be made distributed such that any set of at least t participants can generate a valid nonce and corresponding committment. The distributed nonce can be genrated by running a separate round of DKG algorithm. However, in order to avoid adding an extra round to the protocol and achieve a round-optimized protocol, nonce and its commitment can be generated during a preprocessing round. During the preprocessing round each participant generates a list of single-use private nonce pairs and corresponding public commitment shares. Each entry of the list will be used for signing one message and once all used, the preprocessing round will re-run.
+As mentioned above, in a Schnorr signature scheme, the signer initially generates a commitment to a random nonce and sends it to the verifier. In a threshold Schnorr signature scheme, the nonce generation (as well as the private/public key generation) should be made distributed such that any set of at least *t* participants can generate a valid nonce and corresponding commitment. The distributed nonce can be generated by running a separate round of DKG algorithm. However, in order to avoid adding an extra round to the protocol and achieve a round-optimized protocol, nonce and its commitment can be generated during a preprocessing round. During the preprocessing round, each participant generates a list of single-use private nonce pairs and corresponding public commitment shares. Each entry of the list will be used for signing one message and once all are used, the preprocessing round will re-run.
 
 
 #### Signing
@@ -67,6 +73,7 @@ As mentioned above, in a Schnorr signature scheme, the signer initially generate
 The main benefits of ICE-FROST over its predecessor FROST are:
 
 - Robustness of key generation phase, meaning that we are guaranteed to obtain public key and/or redistribute the shares, without aborting the protocol.
+- Provable identifiability of cheating entities, who are either sending malformed shares or making false accusations.
 - Redistribution feature of shares, which allows the group public key to be static, meaning that it could be used for as long as required by the group or in our specific case by sidechain.
 
 ### Future Work and Next Steps
