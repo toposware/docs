@@ -4,7 +4,7 @@ The Topos cross-subnet messaging protocol provides smart contracts written in *S
 
 - **Asset Transfer**: An asset or token is burned/locked on a source subnet and minted/unlocked on a target subnet.
 - **Arbitrary Contract Call**: Call any function on a user-defined *ToposExecutable* smart contract on a target subnet, from a source subnet.
-- **********************Arbitrary Contract Call with Token**********************: This type of call is similar to the Arbitrary Contract Call, with an additional functionality to attach an asset/token with the contract call.
+- **Arbitrary Contract Call with Token**: This type of call is similar to the Arbitrary Contract Call, with an additional functionality to attach an asset/token with the contract call.
 
 ## Getting Started
 
