@@ -8,7 +8,7 @@ The Topos cross-subnet messaging protocol provides smart contracts written in *S
 
 ## Getting Started
 
-The smart contracts are stored in the `topos-smart-contracts` GitHub repo. For ease of development, we use the *Brownie* development and testing framework.
+The smart contracts are stored in the [`topos-smart-contracts`](https://github.com/toposware/topos-smart-contracts/) GitHub repository. The stack relies on the Python framework [Brownie](https://eth-brownie.readthedocs.io/). Follow the instructions written in the [README.md](https://github.com/toposware/topos-smart-contracts/blob/main/README.md), to install *Brownie* and get started.
 
 ### Installation
 
