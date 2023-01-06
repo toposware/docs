@@ -46,7 +46,7 @@ A new TCE node, once it has joined the TCE network, has successfully built three
 - A `Ready` sample $\mathcal{R}$ and its associated threshold $R < \vert \mathcal{R} \vert$
 - A `Delivery` sample $\mathcal{D}$ and its associated threshold $D < \vert \mathcal{D} \vert$
 
-Starting from this basis, a TCE node starts exchanging _sample-specific_ subcription messages with its `Echo` and `Ready` peers.
+Starting from this basis, a TCE node starts exchanging _sample-specific_ subscription messages with its `Echo` and `Ready` peers.
 
 Upon receiving _sample-specific_ subscription messages from other nodes, a TCE node adds the corresponding message senders in new samples in the following manner:
 
@@ -83,5 +83,5 @@ Before applying the certificate from subnet `S_j`​ to its state, a correct TCE
 Once a certificate passes validation, the TCE node applies the certificate to its local state. Applying a certificate means that the TCE node adds the certificate `Cert` and its digest `digest(S_j)` to the history of subnet `S_j`​.
 
 :::tip Amplification step
-Having the ready sample $\mathcal{E}$ is paramount for the **totality property** of the WCPRB, as it creates a feedback loop. Consequently, either all correct processes will eventually deliver `m`, or none of them will.
+Having the ready sample $\mathcal{R}$ is paramount for the **totality property** of the WCPRB, as it creates a feedback loop. Consequently, either all correct processes will eventually deliver `m`, or none of them will.
 :::
