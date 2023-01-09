@@ -42,7 +42,7 @@ $ brownie networks add <environment> <network_id> host=<host> [KEY=VALUE, ...]
 
 `network_id`: a unique identifier for the network, e.g. “testnet”
 
-`host`: the address of the node to connect to, e.g. “http://127.0.0.1:9933”
+`host`: the address of the node to connect to, e.g. “<http://127.0.0.1:9933>”
 
 `chainid`: the chain ID of a network, e.g. “43”
 
@@ -52,7 +52,8 @@ Use deployment script to deploy the smart contract:
 $ npm run deploy <contract_name> <id> <arg1> <arg2> -- --network <network_id>
 # npm run deploy ToposCoreContract deployment-account 0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87 0x0000000000000000000000000000000000000000000000000000000000000001 -- --network ropsten
 ```
-`contract_name`: the name of the smart contract to be deployed, without `.sol` extention
+
+`contract_name`: the name of the smart contract to be deployed, without `.sol` extension
 
 `id`: the ID assigned to an account
 
@@ -60,62 +61,21 @@ $ npm run deploy <contract_name> <id> <arg1> <arg2> -- --network <network_id>
 
 `network_id`: unique network identifier added in the previous step
 
-# Register TCE Node
+## Register TCE Node
 
-The `TCENodeRegistrator.sol` smart contract provides the functionality for the TCE node operators to register themselves on the Topos Subnet. The smart contract can be pre-deployed on the Topos Subnet during the Topos Subnet setup phase.
+The `TCENodeRegistrator.sol` smart contract provides the functionality for a TCE node operator to register a TCE node on the Topos Subnet. In order to register a TCE node, use the `registerTCENode()` call.
 
-In order to register a TCE node operator on the Topos Subnet, use the `registerTCENode` call.
-
-```solidity
-// TCENodeRegistrator.sol
-
-function registerTCENode(PeerId peerId) public {
-    if (tceNodes[peerId].isPresent) revert TCENodeAlreadyRegistered(peerId);
-    TCENode memory tceNode = TCENode(peerId, true);
-    tceNodes[peerId] = tceNode;
-    emit NewTCENodeRegistered(peerId);
-}
-```
+The input is as follows:
 
 `peerId`: public key of the TCE node operator
 
-The `peerId` is stored in the `mapping(PeerId => TCENode) public tceNodes`, which stores the public keys for all the TCE network operators. Upon success, the call emits a `NewTCENodeRegistered` event, which stores the `peerId` in the transaction logs.
+On the contrary, use the `removeTCENode()` call to remove a participant from the TCE network. Specify the `peerId` of the TCE node to be removed as an argument.
 
-On the contrary, use the `removeTCENode` call to remove a participant from the TCE network.
+## Register Subnet Network
 
-```solidity
-// TCENodeRegistrator.sol
+The `SubnetRegistrator.sol` smart contract allows the stake holder/holders of a subnet to register their subnet on the Topos Subnet, so that the subnet can be a part of the Topos ecosystem. The subnet to be registered must already be up and running prior to the registration. Use the `registerSubnet()` call in order to register a subnet on the Topos Subnet.
 
-function removeTCENode(PeerId peerId) public {
-    if (!tceNodes[peerId].isPresent) revert TCENodeNotRegistered(peerId);
-    delete tceNodes[peerId];
-    emit TCENodeRemoved(peerId);
-}
-```
-
-It emits a `TCENodeRemoved` event storing the removed `peerId` in the transaction logs.
-
-# Register Subnet Network
-
-The `SubnetRegistrator.sol` smart contract allows the stake holder/holders of a subnet to register their subnet on the Topos Subnet, so that the subnet can be a part of the Topos ecosystem. The subnet to be registered must already be up and running prior to the registration. The smart contract can be pre-deployed on the Topos Subnet during the Topos Subnet setup phase.
-
-In order to register a subnet use the `registerSubnet` call.
-
-```solidity
-// SubnetRegistrator.sol
-
-function registerSubnet(
-    bytes calldata endpoint,
-    bytes calldata logoURL,
-    string calldata name,
-    SubnetPublicKey publicKey
-) public {
-    if (subnets[publicKey].isPresent) revert SubnetAlreadyRegistered(publicKey);
-    Subnet memory subnet = Subnet(endpoint, logoURL, name, true);
-    subnets[publicKey] = subnet;
-    emit NewSubnetRegistered(publicKey);
-}
-```
+The input to the call are as follows:
 
 `endpoint`: the JSON RPC endpoint address of the subnet
 
@@ -125,22 +85,9 @@ function registerSubnet(
 
 `publicKey`: the ICE-FROST group public key of a subnet
 
-The registered subnet is stored in the `mapping(SubnetPublicKey => Subnet) public subnets`. Upon success, the call emits a `NewSubnetRegistered` event which stores the `publicKey` in the transaction logs.
+For removing the subnet from the Topos Subnet use the `removeSubnet()` call. Provide the `publicKey` of the subnet which is to be removed, as the input to the call.
 
-For removing the subnet from the registered subnets use the `removeSubnet` call.
-
-```solidity
-// SubnetRegistrator.sol
-
-function removeSubnet(SubnetPublicKey publicKey) public {
-    if (!subnets[publicKey].isPresent) revert SubnetNotRegistered(publicKey);
-    delete subnets[publicKey];
-    emit SubnetRemoved(publicKey);
-}
-```
- If the call is successful it emits a  `SubnetRemoved` event, which stores the `publicKey` of the removed subnet in the transaction logs.
-
-# Topos Core Contract
+## Topos Core Contract
 
 The `ToposCoreContract.sol` smart contract acts as the central bridge for the Topos Cross-Subnet Messaging Protocol. It provides the integral functionalities like:
 
@@ -152,7 +99,7 @@ The `ToposCoreContract.sol` smart contract acts as the central bridge for the To
 
 The `ToposCoreContract` can be pre-deployed on each subnet that wants to partake in the Topos Cross-Subnet Messaging Protocol.
 
-## Deployment
+### Deployment
 
 - Deploy the `TokenDeployer.sol` smart contract
 - Deploy the `ToposCoreContract.sol` smart contract
@@ -222,9 +169,9 @@ The `topos_core_contract` can now be used as a regular `ToposCoreContract` to pe
 📝 In a Proxy Delegate pattern, the storage of the proxy contract is used while the execution of the business logic resides in the delegate smart contract.
 ```
 
-## Upgrade the Delegate ToposCoreContract
+### Upgrade the Delegate ToposCoreContract
 
-The `ToposCoreContract` implementation supports upgradability, in case there is an addition or amendment needed in the delegate contract. In order to upgrade the delegate `ToposCoreContract`, deploy the upgraded `ToposCoreContract` on the subnet. Then use the `upgrade` function in the `ToposCoreContract`, to pass on the new implementation address to the `ToposCoreContract` Proxy.
+The `ToposCoreContract` implementation supports upgradeability, in case there is an addition or amendment needed in the delegate contract. In order to upgrade the delegate `ToposCoreContract`, deploy the upgraded `ToposCoreContract` on the subnet. Then use the `upgrade` function in the `ToposCoreContract`, to pass on the new implementation address to the `ToposCoreContract` Proxy.
 
 ```solidity
 // ToposCoreContract.sol
@@ -265,7 +212,7 @@ Tip: In order to generate the codehash, use the `CodeHash.sol` smart contract.
 
 On success, the call emits an `Upgraded` event with the `newImplementation` address, that can be listened to by any external service.
 
-## Certificate Verification
+### Certificate Verification
 
 One of the main functions provided by the `ToposCoreContract` is to verify the incoming certificates from the TCE network. The certificate verification is needed to prove that the cross-subnet transactions included in the certificate are indeed valid transactions, before applying them onto the target subnet. In order to verify a certificate, use the `verifyCertificate` call.
 
@@ -276,7 +223,7 @@ function verifyCertificate(bytes memory certBytes) external {
     (bytes memory certId, uint256 certPosition) = abi.decode(certBytes, (bytes, uint256));
     Certificate memory storedCert = verifiedCerts[certId];
     if (storedCert.isVerified == true) revert CertAlreadyVerified();
-    if (!_verfiyCertificate(certId)) revert InvalidCert();
+    if (!_verifyCertificate(certId)) revert InvalidCert();
     Certificate memory newCert = Certificate({certId: certId, position: certPosition, isVerified: true});
     verifiedCerts[certId] = newCert;
     emit CertVerified(certId);
@@ -300,16 +247,16 @@ In order to register a token use the `deployToken` function.
 // ToposCoreContract.sol
 
 function deployToken(bytes calldata params) external {
-	(string memory name, string memory symbol, uint256 cap, address tokenAddress, uint256 dailyMintLimit) = abi
-		.decode(params, (string, string, uint256, address, uint256));
-	
-	// Ensure that this symbol has not been taken.
-	if (tokenAddresses(symbol) != address(0)) revert TokenAlreadyExists(symbol);
-	
-	if (tokenAddress == address(0)) {
-	    // If token address is no specified, it indicates a request to deploy one.
+ (string memory name, string memory symbol, uint256 cap, address tokenAddress, uint256 dailyMintLimit) = abi
+  .decode(params, (string, string, uint256, address, uint256));
+ 
+ // Ensure that this symbol has not been taken.
+ if (tokenAddresses(symbol) != address(0)) revert TokenAlreadyExists(symbol);
+ 
+ if (tokenAddress == address(0)) {
+     // If token address is no specified, it indicates a request to deploy one.
     bytes32 salt = keccak256(abi.encodePacked(symbol));
-	
+ 
     // solhint-disable-next-line avoid-low-level-calls
     (bool success, bytes memory data) = _tokenDeployerImplementation.delegatecall(
         abi.encodeWithSelector(ITokenDeployer.deployToken.selector, name, symbol, cap, salt)
@@ -320,18 +267,18 @@ function deployToken(bytes calldata params) external {
     tokenAddress = abi.decode(data, (address));
 
     _setTokenType(symbol, TokenType.InternalBurnableFrom);
-	} else {
+ } else {
     // If token address is specified, ensure that there is a contact at the specified address.
     if (tokenAddress.code.length == uint256(0)) revert TokenContractDoesNotExist(tokenAddress);
 
     // Mark that this symbol is an external token, which is needed to differentiate between operations on mint and burn.
     _setTokenType(symbol, TokenType.External);
-	}
-	
-	_setTokenAddress(symbol, tokenAddress);
-	_setTokenDailyMintLimit(symbol, dailyMintLimit);
-	
-	emit TokenDeployed(symbol, tokenAddress);
+ }
+ 
+ _setTokenAddress(symbol, tokenAddress);
+ _setTokenDailyMintLimit(symbol, dailyMintLimit);
+ 
+ emit TokenDeployed(symbol, tokenAddress);
 }
 ```
 
@@ -349,10 +296,10 @@ Asset transfer refers to sending a token from a source subnet to a target subnet
 // ToposCoreContract.sol
 
 function sendToken(
-	subnetId targetSubnetId,
-	address receiver,
-	string calldata symbol,
-	uint256 amount
+ subnetId targetSubnetId,
+ address receiver,
+ string calldata symbol,
+ uint256 amount
 ) external {
     _burnTokenFrom(msg.sender, symbol, amount);
     emit TokenSent(msg.sender, _networkSubnetId, targetSubnetId, receiver, symbol, amount);
@@ -381,7 +328,7 @@ function executeAssetTransfer(
     bytes calldata crossSubnetTx,
     bytes calldata /*crossSubnetTxProof*/
 ) external {
-    Certificate memory storedCert = getVerfiedCert(certId);
+    Certificate memory storedCert = getVerifiedCert(certId);
     if (storedCert.isVerified == false) revert CertNotVerified();
     (
         bytes memory txHash,
@@ -411,9 +358,9 @@ The `_setSendTokenExecuted` function makes sure that once a transaction is execu
 
 The `_mintToken` function mints the `amount` for the `receiver` if the token is of type `InternalBurnableFrom` and unlocks the token if the token is `External`, given that there are enough tokens in the reserve.
 
-# Topos Executables
+## Topos Executables
 
-The Topos cross-subnet messaging protocol allows users to call a function of a smart contract on a target subnet remotely, from a smart contract on a source subnet. In order to start receiving arbitrary contract calls, the target smart contract needs to implement the `ToposExecutable.sol` interface. 
+The Topos cross-subnet messaging protocol allows users to call a function of a smart contract on a target subnet remotely, from a smart contract on a source subnet. In order to start receiving arbitrary contract calls, the target smart contract needs to implement the `ToposExecutable.sol` interface.
 
 ### Authorize Call Origins
 
