@@ -87,6 +87,38 @@ The input to the call are as follows:
 
 For removing the subnet from the Topos Subnet use the `removeSubnet()` call. Provide the `publicKey` of the subnet which is to be removed, as the input to the call.
 
+## Constant Address Deployer
+
+Creating a cross-subnet messaging protocol sometimes require to deploy the same smart contract on different subnets. Having different addresses for the same smart contract makes it difficult to track the deployed smart contract on different subnets. In order to mitigate the complexity, it is desirable to have the same smart contract with a same address on each subnet. For this reason, we can utilize the `ConstAddressDeployer.sol` smart contract to deploy the target smart contract with constant address across all subnets. The smart contracts (deployed via `ConstAddressDeployer`) are created using the `create2` opcode.
+In order to deploy a smart contract via the `ConstAddressDeployer`, use the `deploy()` call.
+
+The inputs are as follows:
+
+`bytecode`: the translated bytecode that runs on the EVM (encoded along with the constructor args)
+
+`salt`: random data used as additional input to generate the address
+
+The `bytecode` can be generated using the `creationCode` type information or any external Web3 library (depending on your development language).
+
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.9;
+
+import {Contract} from "./Contract.sol";
+
+contract Bytecode {
+    function getBytecode(int arg1, int arg2) public pure returns (bytes memory) {
+        bytes memory creationCode = type(Contract).creationCode;
+        return abi.encodePacked(creationCode, abi.encode(arg1, arg2));
+    }
+}
+```
+
+Use the `deploy2` NodeJS script (read [README.md](https://github.com/toposware/topos-smart-contracts/blob/main/README.md)) to conveniently deploy a smart contract via the `ConstAddressDeployer`. The script takes the JSON abi file path of a compiled smart contract, as an input which contains the `bytecode` for the smart contract, so you don't have to worry about manually extracting the `bytecode` using Solidity.
+
+If the smart contract has an initialization function the `deployAndInit()` call can be used to deploy and initialize the smart contract in a single step. The initializing arguments (`init`) must be passed as input along with the same arguments as the `deploy()` call.
+
 ## Topos Core Contract
 
 The `ToposCoreContract.sol` smart contract acts as the central bridge for the Topos Cross-Subnet Messaging Protocol. It provides the integral functionalities like:
