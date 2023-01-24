@@ -19,6 +19,6 @@ Asset transfer refers to sending a token from a source subnet to a target subnet
 To make an asset transfer:
 
 - Approve the `ToposCoreContract` to spend an amount on your behalf
-- call the `sendToken` method
+- Call the `sendToken` method
 
 Watch the tokens appear on the target subnet.
