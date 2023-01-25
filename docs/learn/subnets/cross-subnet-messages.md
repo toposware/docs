@@ -24,9 +24,9 @@ While subnets are free to implement any specific cross-subnet messaging protocol
 
 ## Topos Cross-Subnet Messaging Protocol
 
-The requesting user calls a dedicated protocol-level smart contract, the **Topos Core contract**, on the sending subnet. Once proven to be part of a verified state transition of the sending subnet, the call is executed on the receiving subnet.
+The requesting user calls a dedicated protocol-level smart contract, the **Topos Core**, on the sending subnet. Once proven to be part of a verified state transition of the sending subnet, the call is executed on the receiving subnet.
 
-The Topos Core contract function to call on the sending subnet depends on the type of message requested:
+The Topos Core smart contract function to call on the sending subnet depends on the type of message requested:
 
 - **Asset transfer**: An asset is burnt/locked on the sending subnet and equivalently minted on the receiving one.
 
