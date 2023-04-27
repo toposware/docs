@@ -145,12 +145,12 @@ module.exports = {
       },
       algolia: {
         // The application ID provided by Algolia
-        appId: 'YOUR_APP_ID',
+        appId: 'S36OISFKTX',
 
         // Public API key: it is safe to commit it
-        apiKey: 'YOUR_SEARCH_API_KEY',
+        apiKey: '0fa2fba08c391e0b749497138ce5d965',
 
-        indexName: 'YOUR_INDEX_NAME',
+        indexName: 'toposware',
       },
     }),
   stylesheets: [
