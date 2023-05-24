@@ -2,9 +2,9 @@
 sidebar_position: 1
 ---
 
-# Tooling
+# CLI
 
-`topos` is the unified CLI tool to interact with the Topos network. The different processes such as TCE, or Sequencer, are runnable through this utility.
+`topos` is the unified CLI tool to interact with the Topos network. The different processes are runnable through this utility.
 
 ## Installation
 
